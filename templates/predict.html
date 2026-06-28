@@ -1,0 +1,634 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image - Cataract Detection</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url("{{ url_for('static', filename='images/slide1.jpg') }}") no-repeat center center/cover;
+            overflow-x: hidden;
+            color: #fff;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 0;
+        }
+
+        .upload-container {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .upload-box {
+            background: rgba(0,0,0,0.6);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+            animation: fadeInUp 1.2s ease;
+        }
+
+        .upload-box h2 {
+            font-size: 28px;
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+            animation: slideDown 1s ease;
+        }
+
+        input[type="file"] {
+            padding: 12px;
+            border: 2px dashed #fff;
+            border-radius: 10px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        input[type="file"]:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.03);
+        }
+
+        .btn-upload {
+            background: #ff9800;
+            color: #fff;
+            padding: 12px 40px;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            animation: pulse 2s infinite;
+        }
+
+        .btn-upload:hover {
+            background: #e68900;
+            transform: translateY(-4px);
+            box-shadow: 0px 6px 15px rgba(0,0,0,0.4);
+        }
+
+        a.back-home {
+            color: #fff;
+            margin-top: 15px;
+            display: inline-block;
+            text-decoration: underline;
+            transition: 0.3s;
+        }
+
+        a.back-home:hover {
+            color: #ffb74d;
+        }
+
+        /* Animations */
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 152, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
+        }
+
+        @media (max-width: 480px) {
+            .upload-box h2 { font-size: 24px; }
+            .btn-upload { padding: 10px 30px; font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="upload-container">
+        <div class="upload-box">
+            <h2><i class="fa-solid fa-eye"></i> Upload Eye Image</h2>
+            <form method="POST" action="{{ url_for('predict') }}" enctype="multipart/form-data">
+                <input type="file" name="file" accept="image/*" required>
+                <button type="submit" class="btn-upload">Predict</button>
+            </form>
+            <a href="{{ url_for('home') }}" class="back-home">⬅ Back to Home</a>
+        </div>
+    </div>
+</body>
+</html> -->
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image - Cataract Detection</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url("{{ url_for('static', filename='images/slide1.jpg') }}") no-repeat center center/cover;
+            overflow-x: hidden;
+            color: #fff;
+            position: relative;
+        }
+
+        /* Animated overlay with shifting gradient */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(15, 32, 60, 0.85) 0%,
+                rgba(32, 58, 95, 0.75) 50%,
+                rgba(15, 32, 60, 0.85) 100%);
+            z-index: 0;
+            animation: overlayPulse 8s ease-in-out infinite;
+        }
+
+        @keyframes overlayPulse {
+            0%, 100% { opacity: 0.85; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Floating orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(100, 181, 246, 0.3), rgba(33, 150, 243, 0.1));
+            filter: blur(40px);
+            animation: floatOrb 20s infinite ease-in-out;
+            z-index: 1;
+        }
+
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            bottom: -150px;
+            right: -150px;
+            animation-delay: 5s;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 107, 107, 0.3), rgba(238, 90, 111, 0.1));
+        }
+
+        .orb-3 {
+            width: 250px;
+            height: 250px;
+            top: 50%;
+            left: 50%;
+            animation-delay: 10s;
+            background: radial-gradient(circle at 30% 30%, rgba(156, 39, 176, 0.2), rgba(103, 58, 183, 0.1));
+        }
+
+        @keyframes floatOrb {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(50px, -50px) scale(1.1);
+            }
+            66% {
+                transform: translate(-30px, 30px) scale(0.9);
+            }
+        }
+
+        .upload-container {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .upload-box {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 50px 40px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: floatIn 1s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative corner accents */
+        .upload-box::before,
+        .upload-box::after {
+            content: "";
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 2px solid rgba(100, 181, 246, 0.3);
+            border-radius: 20px;
+            animation: rotate 10s linear infinite;
+        }
+
+        .upload-box::before {
+            top: -20px;
+            left: -20px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .upload-box::after {
+            bottom: -20px;
+            right: -20px;
+            border-left: none;
+            border-top: none;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes floatIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(60px) scale(0.9);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Icon container */
+        .icon-container {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            background: linear-gradient(135deg, #64b5f6, #2196f3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(33, 150, 243, 0.4);
+            animation: iconBounce 2s ease-in-out infinite;
+            position: relative;
+        }
+
+        .icon-container::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid rgba(100, 181, 246, 0.5);
+            animation: ripple 2s ease-out infinite;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        @keyframes iconBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .icon-container i {
+            font-size: 36px;
+            color: #fff;
+        }
+
+        .upload-box h2 {
+            font-size: 32px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff, #e3f2fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            animation: slideDown 0.8s ease-out;
+            letter-spacing: -0.5px;
+        }
+
+        .upload-box p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 35px;
+            font-size: 15px;
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Custom file upload area */
+        .file-upload-wrapper {
+            position: relative;
+            margin-bottom: 30px;
+            animation: fadeIn 1.2s ease-out 0.5s both;
+        }
+
+        .file-upload-area {
+            position: relative;
+            padding: 40px 20px;
+            border: 3px dashed rgba(100, 181, 246, 0.5);
+            border-radius: 20px;
+            background: rgba(100, 181, 246, 0.05);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+
+        .file-upload-area::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .file-upload-area:hover::before {
+            left: 100%;
+        }
+
+        .file-upload-area:hover {
+            border-color: rgba(100, 181, 246, 0.8);
+            background: rgba(100, 181, 246, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(33, 150, 243, 0.2);
+        }
+
+        input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #64b5f6;
+            margin-bottom: 15px;
+            display: block;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .upload-text {
+            font-size: 16px;
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .upload-hint {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Submit button */
+        .btn-upload {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: #fff;
+            padding: 15px 50px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 1.4s ease-out 0.7s both;
+        }
+
+        .btn-upload::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-upload:hover::before {
+            width: 350px;
+            height: 350px;
+        }
+
+        .btn-upload:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.6);
+        }
+
+        .btn-upload:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .btn-upload i {
+            margin-right: 8px;
+        }
+
+        /* Back link */
+        a.back-home {
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 25px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 15px;
+            animation: fadeIn 1.6s ease-out 0.9s both;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        a.back-home:hover {
+            color: #64b5f6;
+            background: rgba(100, 181, 246, 0.1);
+            transform: translateX(-5px);
+        }
+
+        a.back-home i {
+            transition: transform 0.3s ease;
+        }
+
+        a.back-home:hover i {
+            transform: translateX(-3px);
+        }
+
+        /* Progress indicator */
+        .progress-steps {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-out 0.2s both;
+        }
+
+        .step {
+            width: 40px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step.active::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #64b5f6, #2196f3);
+            animation: progressFill 1s ease-out;
+        }
+
+        @keyframes progressFill {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @media (max-width: 480px) {
+            .upload-box {
+                padding: 40px 25px;
+            }
+            .upload-box h2 { 
+                font-size: 26px; 
+            }
+            .icon-container {
+                width: 70px;
+                height: 70px;
+            }
+            .icon-container i {
+                font-size: 30px;
+            }
+            .btn-upload { 
+                padding: 12px 35px; 
+                font-size: 16px; 
+            }
+            .file-upload-area {
+                padding: 30px 15px;
+            }
+            .upload-icon {
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="upload-container">
+        <div class="upload-box">
+            <div class="progress-steps">
+                <div class="step active"></div>
+                <div class="step"></div>
+                <div class="step"></div>
+            </div>
+
+            <div class="icon-container">
+                <i class="fa-solid fa-eye"></i>
+            </div>
+
+            <h2>Upload Eye Image</h2>
+            <p>Select a clear image of the eye for accurate detection</p>
+
+            <form method="POST" action="{{ url_for('predict') }}" enctype="multipart/form-data">
+                <div class="file-upload-wrapper">
+                    <div class="file-upload-area">
+                        <input type="file" name="file" accept="image/*" required>
+                        <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                        <div class="upload-text">Click to browse</div>
+                        <div class="upload-hint">or drag and drop your image here</div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-upload">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Analyze Image</span>
+                </button>
+            </form>
+
+            <a href="{{ url_for('home') }}" class="back-home">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Back to Home</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

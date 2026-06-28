@@ -1,0 +1,68 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #0f172a;
+  color: white;
+}
+
+/* Hero section with background */
+.hero {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url('https://img.freepik.com/free-photo/human-eye-close-up-digital-overlay_23-2149362287.jpg') no-repeat center center/cover;
+  position: relative;
+}
+
+/* Dark overlay for readability */
+.overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Glassmorphism card */
+.content-card {
+  position: relative;
+  z-index: 2;
+  max-width: 600px;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  text-align: center;
+  box-shadow: 0px 8px 25px rgba(0,0,0,0.4);
+}
+
+.content-card h1 {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  color: #38bdf8;
+}
+
+.content-card p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  color: #e2e8f0;
+}
+
+/* Fancy button */
+.btn {
+  display: inline-block;
+  padding: 14px 28px;
+  background: linear-gradient(45deg, #3b82f6, #06b6d4);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  background: linear-gradient(45deg, #06b6d4, #3b82f6);
+  transform: scale(1.05);
+  box-shadow: 0px 6px 20px rgba(0,0,0,0.4);
+}

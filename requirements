@@ -1,0 +1,11 @@
+tensorflow>=2.10
+opencv-python
+flask
+pillow
+numpy
+matplotlib
+h5py
+Flask==2.2.5
+tensorflow==2.12.0
+numpy
+werkzeug
